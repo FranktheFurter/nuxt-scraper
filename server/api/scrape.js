@@ -2,7 +2,7 @@
 import puppeteer from "puppeteer"
 import { eventHandler } from "h3"
 
-export default eventHandler(async ({ res }) => {
+export default eventHandler(async () => {
   try {
     const browser = await puppeteer.launch({ headless: "new" })
     const page = await browser.newPage()
@@ -17,13 +17,9 @@ export default eventHandler(async ({ res }) => {
     await browser.close()
 
     // Return the title as JSON response
-    res.setHeader("Content-Type", "application/json")
-    res.end(JSON.stringify({ title }))
+    return { title }
   } catch (error) {
     console.error("Error scraping:", error)
-    res.setHeader("Content-Type", "application/json")
-    res
-      .status(500)
-      .end(JSON.stringify({ error: "An error occurred while scraping." }))
+    throw new Error("An error occurred while scraping.")
   }
 })
